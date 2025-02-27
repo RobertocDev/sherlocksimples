@@ -14,6 +14,24 @@ SITES = [
     {"name": "Facebook", "url": "https://facebook.com/{}"}
 ]
 
+TYPEBOT_API_URL = "https://api.typebot.io/v1/message/send"  # Endpoint da API Typebot
+TYPEBOT_API_KEY = "your_typebot_api_key"  # Substitua com a chave de API do seu Typebot
+
+def send_message_to_typebot(message):
+    """
+    Envia uma mensagem para o Typebot.
+    """
+    payload = {
+        "bot_id": "your_bot_id",  # Substitua com o ID do seu bot
+        "message": message,
+    }
+    headers = {
+        "Authorization": f"Bearer {TYPEBOT_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    response = requests.post(TYPEBOT_API_URL, json=payload, headers=headers)
+    return response.json()
+
 def check_username(username, site):
     """
     Verifica se o nome de usuário existe no site.
@@ -43,13 +61,17 @@ def sherlock():
             formatted_result = f"{result['site']}: {result['url']}"
             results.append(formatted_result)
 
-    # Retornar os resultados
+    # Enviar mensagem para o Typebot
     if results:
+        message = f"Usuário '{username}' encontrado nos seguintes sites:\n" + "\n".join(results)
+        send_message_to_typebot(message)
         response = jsonify({"status": "success", "sites": results})
         response.headers['Content-Type'] = 'application/json'  # Forçar o tipo de conteúdo
         return response
     else:
-        response = jsonify({"status": "error", "message": f"Nenhum resultado encontrado para o usuário '{username}'."})
+        message = f"Nenhum resultado encontrado para o usuário '{username}'."
+        send_message_to_typebot(message)
+        response = jsonify({"status": "error", "message": message})
         response.headers['Content-Type'] = 'application/json'  # Forçar o tipo de conteúdo
         return response, 404
 
