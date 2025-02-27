@@ -10,7 +10,7 @@ SITES = [
     {"name": "GitHub", "url": "https://github.com/{}"},
     {"name": "Reddit", "url": "https://reddit.com/user/{}"},
     {"name": "YouTube", "url": "https://youtube.com/{}"},
-    {"name": "Facebook", "url": "https://facebook.com/{}"}  # Adicionei o Facebook como exemplo
+    {"name": "Facebook", "url": "https://facebook.com/{}"}
 ]
 
 def check_username(username, site):
@@ -39,5 +39,15 @@ def sherlock():
     for site in SITES:
         result = check_username(username, site)
         if result["exists"]:
-            # Formata o resultado como "Nome_do_Site: URL_do_Site"
             formatted_result = f"{result['site']}: {result['url']}"
+            results.append(formatted_result)
+
+    # Retornar os resultados
+    if results:
+        return jsonify({"status": "success", "sites": results})
+    else:
+        return jsonify({"status": "error", "message": f"Nenhum resultado encontrado para o usuário '{username}'."}), 404
+
+if __name__ == '__main__':
+    # Rodar a API na porta 5000
+    app.run(host='0.0.0.0', port=5000)
