@@ -2,6 +2,7 @@ import os
 import json
 import requests
 from flask import Flask, request, jsonify
+from sherlock import sherlock
 
 app = Flask(__name__)
 
@@ -15,8 +16,9 @@ def verificar_usuario(username):
     """
     resultado = {}
     try:
-        resposta = os.popen(f"python3 sherlock/sherlock.py {username} --json").read()
-        resultado = json.loads(resposta)
+        # Usando o Sherlock como uma biblioteca
+        sherlock_results = sherlock.sherlock(username)
+        resultado = {site: data for site, data in sherlock_results.items()}
     except Exception as e:
         resultado = {"erro": str(e)}
     return resultado
@@ -39,7 +41,7 @@ def enviar_resposta_typebot(mensagem):
 
 
 @app.route("/sherlock", methods=["GET"])
-def sherlock():
+def sherlock_route():
     username = request.args.get("username")
     if not username:
         return jsonify({"erro": "Username não fornecido"}), 400
