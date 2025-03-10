@@ -27,7 +27,7 @@ SITES = {
     "Medium": "https://medium.com/@{}",
     "Substack": "https://{}.substack.com",
     "Trello": "https://trello.com/{}",
-    "Tumblr": "https://tumblr.com{}",
+    "Tumblr": "https://tumblr.com/{}",
     "Blogger": "https://{}.blogspot.com",
     "Dailymotion": "https://www.dailymotion.com/{}",
     "Catarse": "https://www.catarse.me/{}",
