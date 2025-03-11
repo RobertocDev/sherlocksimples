@@ -35,19 +35,10 @@ SITES = {
     "Vimeo": "https://vimeo.com/{}"
 }
 
-# Função que pega todas as URLs encontradas e junta em um único texto
-def get_all_urls(results):
-    urls = []
-    for site, data in results.items():
-        if data['status'] == "✅ Encontrado" and data['url']:
-            urls.append(data['url'])
-    
-    # Retorna todas as URLs juntas em uma string separada por nova linha
-    return "\n".join(urls) if urls else "Nenhum perfil encontrado."
-
 @app.route('/check/<username>', methods=['GET'])
 def check_username(username):
     results = {}
+    all_urls = []  # Lista para armazenar todas as URLs encontradas
 
     for site, url in SITES.items():
         profile_url = url.format(username)
@@ -56,14 +47,15 @@ def check_username(username):
         # Se o status for 200, significa que a conta existe
         if response.status_code == 200:
             results[site] = {"status": "✅ Encontrado", "url": profile_url}
+            all_urls.append(profile_url)  # Adiciona a URL encontrada à lista
         else:
             results[site] = {"status": "❌ Não encontrado", "url": None}
 
-    # Agora vamos pegar todas as URLs encontradas e juntá-las
-    all_urls = get_all_urls(results)
+    # Adiciona todas as URLs encontradas em um único texto
+    all_urls_text = "\n".join(all_urls) if all_urls else "Nenhum perfil encontrado."
 
-    # Retornar a resposta com as URLs combinadas em um único texto
-    return jsonify({"result": all_urls})
+    # Retorna a resposta com as URLs combinadas em um único texto
+    return jsonify({"result": all_urls_text, "details": results})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
